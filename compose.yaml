@@ -28,7 +28,7 @@ services:
       valkey-cluster:
         condition: service_healthy
     environment:
-      VALKEY_ADDRS: "valkey-cluster:7001,valkey-cluster:7002,valkey-cluster:7003" # NOTE: somehow try to connect to 127.0.0.1:7001
+      VALKEY_ADDRS: "valkey-cluster:7001,valkey-cluster:7002,valkey-cluster:7003"
 
 volumes:
   valkey-data:
