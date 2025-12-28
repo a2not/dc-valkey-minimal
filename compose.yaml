@@ -19,7 +19,7 @@ services:
     ports:
       - 7001-7003:7001-7003
     healthcheck:
-      test: ["CMD-SHELL", "valkey-cli -p 7001 CLUSTER INFO | grep 'cluster_state:ok'"]
+      test: ["CMD-SHELL", "valkey-cli -h valkey-cluster -p 7001 CLUSTER INFO | grep -q 'cluster_state:ok'"]
       interval: 1s
       timeout: 20s
       retries: 10
