@@ -1,13 +1,21 @@
 services:
   valkey-cluster:
-    image: valkey/valkey:8.0-alpine
+    image: valkey/valkey:8.0
     entrypoint:
       - /bin/sh
       - -c
       - |
-        valkey-server --port 7001 --cluster-enabled yes --cluster-config-file 7001.conf --cluster-announce-hostname valkey-cluster &
-        valkey-server --port 7002 --cluster-enabled yes --cluster-config-file 7002.conf --cluster-announce-hostname valkey-cluster &
-        valkey-server --port 7003 --cluster-enabled yes --cluster-config-file 7003.conf --cluster-announce-hostname valkey-cluster &
+        for port in 7001 7002 7003; do
+          mkdir -p /data/node_$${port}
+          valkey-server \
+            --port $${port} \
+            --cluster-enabled yes \
+            --save "10 1" \
+            --dir /data/node_$${port} \
+            --cluster-config-file $${port}.conf \
+            --cluster-announce-hostname valkey-cluster \
+            --cluster-preferred-endpoint-type hostname &
+        done
 
         # Check if cluster is already formed (cluster_state:ok means persisted config loaded successfully)
         while ! valkey-cli -h valkey-cluster -p 7001 CLUSTER INFO 2>/dev/null | grep -q "cluster_state:ok"; do
